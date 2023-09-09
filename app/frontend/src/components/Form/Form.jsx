@@ -6,6 +6,7 @@ function Form() {
   const {
     updateValidationResults,
     updateLoading,
+    loading,
   } = useContext(ProductsContext);
 
   const [selectedFile, setSelectedFile] = useState(null);
@@ -51,7 +52,7 @@ function Form() {
           accept=".csv"
           onChange={ handleFileChange }
         />
-        <button type="submit">Validar</button>
+        <button type="submit" disabled={ loading }>Validar</button>
       </form>
       {selectedFile && (
         <p>

@@ -53,19 +53,24 @@ export default class ProductService {
     const productCodesToUpdate = productsToUpdate.map((product) => BigInt(product.productId));
     const productsFromDB = await this.productModel.findByCodes(productCodesToUpdate);
 
-    const productMap = new Map(productCodesToUpdate.map(
-      (code, index) => [code, productsFromDB[index]],
-    ));
-
     const invalidPriceProducts = productsToUpdate.filter((product) => {
-      const productCode = BigInt(product.productId);
-      const productFromDB = productMap.get(productCode);
+      const productFromDB = productsFromDB.find((p) => Number(p.code) === (product.productId));
 
       if (productFromDB) {
-        const priceDifference = Math.abs(product.newPrice - productFromDB.salesPrice);
-        const priceChangeLimit = productFromDB.salesPrice * 0.1;
+        const maxPrice = Number(productFromDB.salesPrice) + Number(productFromDB.salesPrice) * 0.1;
+        const minPrice = Number(productFromDB.salesPrice) - Number(productFromDB.salesPrice) * 0.1;
 
-        return priceDifference > priceChangeLimit;
+        if (productFromDB.salesPrice < product.newPrice) {
+          if (product.newPrice > maxPrice) {
+            return true;
+          }
+        } else if (productFromDB.salesPrice > product.newPrice) {
+          if (product.newPrice < minPrice) {
+            return true;
+          }
+        } else {
+          return false;
+        }
       }
 
       return false;
@@ -93,20 +98,13 @@ export default class ProductService {
 
         const pricesProductsShouldHave = await Promise.all(pricesProductsShouldHavePromises);
 
-        console.log('sohuld = ', pricesProductsShouldHave);
-
         let found = false;
 
         productsToUpdate.forEach((element) => {
-          console.log('it ');
-
           if (!found) {
             found = pricesProductsShouldHave.some((p) => {
               const productIdMatch = Number(p.id) === Number(element.productId);
               const priceMatch = p.price.toFixed(2) === element.newPrice.toFixed(2);
-
-              console.log(`Debug: productId=${p.id}, element=${element.productId}`);
-              console.log(`Debug: productIdMatch=${productIdMatch}, priceMatch=${priceMatch}`);
 
               return productIdMatch && priceMatch;
             });
@@ -143,8 +141,6 @@ export default class ProductService {
     }
 
     const dataToSend = await Promise.all(promises);
-
-    console.log(dataToSend);
 
     return { status: 'SUCCESSFUL', data: dataToSend };
   }

@@ -1,0 +1,58 @@
+.list {
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 5vh;
+  color: black;
+  min-width: 50vw;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #333;
+  color: #ccc;
+}
+
+table th,
+table td {
+  border: 1px solid rgb(243, 236, 175);
+  padding: 10px;
+  text-align: left; /* Centralizar o texto */
+}
+
+table th {
+  background-color: rgb(243, 236, 175);
+  color: black;
+  text-align: center;
+}
+
+table td div {
+  width: 100%;
+  text-align: center;
+}
+
+p {
+  font-size: 18px;
+  text-align: center;
+  margin-top: 10px;
+  color: rgb(243, 236, 175);
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  margin-left: 20px;
+  padding-left: 10px;
+  border-left: 2px solid #ccc;
+  margin-top: 10px;
+  color: lightcoral;
+}
+
+.valid {
+  color: lightgreen;
+}

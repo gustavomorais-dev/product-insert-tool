@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './Form.css';
+import { ProductsContext } from '../../context/products.provider';
 
 function Form() {
+  const {
+    updateValidationResults,
+    updateLoading,
+  } = useContext(ProductsContext);
+
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
@@ -9,24 +15,43 @@ function Form() {
     setSelectedFile(file);
   };
 
-  const handleSubmit = (event) => {
+  const handleValidate = async (event) => {
     event.preventDefault();
-
     if (selectedFile) {
-      console.log('Arquivo selecionado:', selectedFile.name);
+      updateLoading(true);
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+
+      try {
+        console.log('formdata ', formData);
+        const response = await fetch('http://localhost:3001/file/validate', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          updateValidationResults(data);
+        } else {
+          console.error('Erro ao enviar o arquivo.');
+        }
+        updateLoading(false);
+      } catch (error) {
+        console.error('Erro ao enviar o arquivo:', error);
+      }
     }
   };
 
   return (
     <div className="form">
       <h2>Carregue o arquivo com a nova precificação:</h2>
-      <form onSubmit={ handleSubmit }>
+      <form onSubmit={ handleValidate } encType="multipart/form-data">
         <input
           type="file"
           accept=".csv"
           onChange={ handleFileChange }
         />
-        <button type="submit">Enviar</button>
+        <button type="submit">Validar</button>
       </form>
       {selectedFile && (
         <p>

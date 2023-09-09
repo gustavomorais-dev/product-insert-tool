@@ -5,6 +5,7 @@ import {
   InferCreationAttributes,
 } from 'sequelize';
 import db from '.';
+import SequelizeProduct from './Product.sequelize.model';
 
 class SequelizePack extends Model<InferAttributes<SequelizePack>,
 InferCreationAttributes<SequelizePack>> {
@@ -42,5 +43,7 @@ SequelizePack.init({
   timestamps: false,
   underscored: true,
 });
+
+SequelizePack.belongsTo(SequelizeProduct, { as: 'product', foreignKey: 'productId' });
 
 export default SequelizePack;
